@@ -12,7 +12,15 @@ class MaemoPetrol(object):
     def __init__(self):
         self.tree = gtk.glade.XML("maemo-petrol.glade")
         self.tree.signal_autoconnect(self)
+        self.init_fill_list()
+        self.calendar_day_selected_handler(None)
 
+        self.add_dialog = self.tree.get_widget("add_window")
+
+        self.last_edited = None
+        self.cars = []
+
+    def init_fill_list(self):
         self.fill_list = self.tree.get_widget("fill_list")
         self.fill_store = gtk.TreeStore(str, int, float, str, str)
         self.fill_list.set_model(self.fill_store)
@@ -32,9 +40,6 @@ class MaemoPetrol(object):
         column = gtk.TreeViewColumn("Date", gtk.CellRendererText(), text=4)
         self.fill_list.append_column(column)
 
-        self.add_dialog = self.tree.get_widget("add_window")
-
-        self.last_edited = None
 
     #
     # Add form properties
@@ -59,7 +64,7 @@ class MaemoPetrol(object):
 
     @property
     def date(self):
-        y, m, d = self.tree.get_widget("date").get_date()
+        y, m, d = self.tree.get_widget("calendar").get_date()
         m += 1
         return datetime.date(y, m, d)
 
@@ -81,11 +86,24 @@ class MaemoPetrol(object):
         self.add_dialog.hide()
 
     def add_ok_handler(self, event):
+        car = self.tree.get_widget("car")
+        text = car.get_active_text()
+        if text not in self.cars:
+            car.append_text(text)
+            self.cars.append(text)
         self.fill_store.append(None, [self.car, self.odometer, self.volume,
                                       "%.2f" % self.sum,
                                       self.date.strftime("%Y-%m-%d")])
 
         self.add_dialog.hide()
+
+    def calendar_day_selected_handler(self, event):
+        date_button = self.tree.get_widget("date_button")
+        date_button.set_label(self.date.strftime("%Y-%m-%d"))
+        self.tree.get_widget("calendar_popup").hide()
+
+    def on_date_button_clicked(self, event):
+        self.tree.get_widget("calendar_popup").show()
 
     def add_volume_changed(self, event):
         if self.last_edited == 'sum':

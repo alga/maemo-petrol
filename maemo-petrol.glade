@@ -29,7 +29,7 @@
       <property name="spacing">0</property>
 
       <child>
-	<widget class="GtkScrolledWindow" id="scrolledwindow1">
+	<widget class="GtkScrolledWindow" id="scroll">
 	  <property name="visible">True</property>
 	  <property name="can_focus">True</property>
 	  <property name="hscrollbar_policy">GTK_POLICY_NEVER</property>
@@ -161,25 +161,6 @@
 	      <property name="bottom_attach">1</property>
 	      <property name="x_options">fill</property>
 	      <property name="y_options"></property>
-	    </packing>
-	  </child>
-
-	  <child>
-	    <widget class="GtkComboBoxEntry" id="car">
-	      <property name="visible">True</property>
-	      <property name="items">A
-B
-C</property>
-	      <property name="add_tearoffs">True</property>
-	      <property name="has_frame">True</property>
-	      <property name="focus_on_click">True</property>
-	    </widget>
-	    <packing>
-	      <property name="left_attach">1</property>
-	      <property name="right_attach">2</property>
-	      <property name="top_attach">0</property>
-	      <property name="bottom_attach">1</property>
-	      <property name="y_options">fill</property>
 	    </packing>
 	  </child>
 
@@ -354,7 +335,7 @@ C</property>
 	      <property name="update_policy">GTK_UPDATE_ALWAYS</property>
 	      <property name="snap_to_ticks">False</property>
 	      <property name="wrap">False</property>
-	      <property name="adjustment">1 0 100 0.00999999977648 10 10</property>
+	      <property name="adjustment">1 0 1000 0.00999999977648 10 10</property>
 	      <signal name="value_changed" handler="add_volume_changed" last_modification_time="Sat, 27 Jan 2007 20:57:33 GMT"/>
 	    </widget>
 	    <packing>
@@ -398,7 +379,7 @@ C</property>
 	      <property name="update_policy">GTK_UPDATE_ALWAYS</property>
 	      <property name="snap_to_ticks">False</property>
 	      <property name="wrap">False</property>
-	      <property name="adjustment">1 0 100 0.00999999977648 10 10</property>
+	      <property name="adjustment">1 0 1000000 0.00999999977648 10 10</property>
 	      <signal name="value_changed" handler="add_sum_changed" last_modification_time="Sat, 27 Jan 2007 20:58:22 GMT"/>
 	    </widget>
 	    <packing>
@@ -411,10 +392,45 @@ C</property>
 	  </child>
 
 	  <child>
-	    <widget class="GtkCalendar" id="date">
+	    <widget class="GtkHBox" id="hbox4">
+	      <property name="visible">True</property>
+	      <property name="homogeneous">False</property>
+	      <property name="spacing">0</property>
+
+	      <child>
+		<widget class="GtkComboBoxEntry" id="car">
+		  <property name="visible">True</property>
+		  <property name="items"></property>
+		  <property name="add_tearoffs">False</property>
+		  <property name="has_frame">True</property>
+		  <property name="focus_on_click">True</property>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">False</property>
+		</packing>
+	      </child>
+	    </widget>
+	    <packing>
+	      <property name="left_attach">1</property>
+	      <property name="right_attach">2</property>
+	      <property name="top_attach">0</property>
+	      <property name="bottom_attach">1</property>
+	      <property name="x_options">fill</property>
+	      <property name="y_options">fill</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkButton" id="date_button">
 	      <property name="visible">True</property>
 	      <property name="can_focus">True</property>
-	      <property name="display_options">GTK_CALENDAR_SHOW_HEADING|GTK_CALENDAR_SHOW_DAY_NAMES</property>
+	      <property name="label" translatable="yes">YYYY-MM-DD</property>
+	      <property name="use_underline">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="focus_on_click">True</property>
+	      <signal name="clicked" handler="on_date_button_clicked" last_modification_time="Tue, 06 May 2008 20:38:55 GMT"/>
 	    </widget>
 	    <packing>
 	      <property name="left_attach">1</property>
@@ -422,7 +438,7 @@ C</property>
 	      <property name="top_attach">1</property>
 	      <property name="bottom_attach">2</property>
 	      <property name="x_options">fill</property>
-	      <property name="y_options">fill</property>
+	      <property name="y_options"></property>
 	    </packing>
 	  </child>
 	</widget>
@@ -480,6 +496,31 @@ C</property>
 	  <property name="fill">True</property>
 	</packing>
       </child>
+    </widget>
+  </child>
+</widget>
+
+<widget class="GtkWindow" id="calendar_popup">
+  <property name="title" translatable="yes">Select date</property>
+  <property name="type">GTK_WINDOW_POPUP</property>
+  <property name="window_position">GTK_WIN_POS_MOUSE</property>
+  <property name="modal">False</property>
+  <property name="resizable">True</property>
+  <property name="destroy_with_parent">False</property>
+  <property name="decorated">True</property>
+  <property name="skip_taskbar_hint">False</property>
+  <property name="skip_pager_hint">False</property>
+  <property name="type_hint">GDK_WINDOW_TYPE_HINT_MENU</property>
+  <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
+  <property name="focus_on_map">True</property>
+  <property name="urgency_hint">False</property>
+
+  <child>
+    <widget class="GtkCalendar" id="calendar">
+      <property name="visible">True</property>
+      <property name="can_focus">True</property>
+      <property name="display_options">GTK_CALENDAR_SHOW_HEADING|GTK_CALENDAR_SHOW_DAY_NAMES</property>
+      <signal name="day_selected" handler="calendar_day_selected_handler" last_modification_time="Tue, 06 May 2008 20:30:44 GMT"/>
     </widget>
   </child>
 </widget>
